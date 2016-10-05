@@ -25,6 +25,10 @@ func parseFile(fset *token.FileSet, path, template string) (*ast.File, error) {
 	// Inject first comment to prevent nil comment map
 	if len(af.Comments) == 0 {
 		af.Comments = []*ast.CommentGroup{{List: []*ast.Comment{{Slash: -1, Text: "// gocmt"}}}}
+		defer func() {
+			// Remove the injected comment
+			af.Comments = af.Comments[1:]
+		}()
 	}
 	cmap := ast.NewCommentMap(fset, af, af.Comments)
 
@@ -81,8 +85,6 @@ func parseFile(fset *token.FileSet, path, template string) (*ast.File, error) {
 
 	// Rebuild comments
 	af.Comments = cmap.Filter(af).Comments()
-	// Remove the injected comment
-	af.Comments = af.Comments[1:]
 
 	return af, nil
 }
