@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"go/printer"
+	"go/format"
 	"go/token"
 	"io/ioutil"
 	"os"
@@ -89,7 +89,7 @@ func processFile(filename, template string, inPlace bool) error {
 	}
 
 	var buf bytes.Buffer
-	if err := printer.Fprint(&buf, fset, af); err != nil {
+	if err := format.Node(&buf, fset, af); err != nil {
 		panic(err)
 	}
 
