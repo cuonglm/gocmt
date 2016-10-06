@@ -41,11 +41,7 @@ func parseFile(fset *token.FileSet, path, template string) (*ast.File, error) {
 				continue
 			}
 
-			if fd.Doc == nil || strings.TrimSpace(fd.Doc.Text()) == fd.Name.Name {
-				text := fmt.Sprintf(commentTemplate, fd.Name)
-				pos := fd.Pos() - token.Pos(1)
-				fd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
-			}
+			addFuncDeclComment(fd, commentTemplate)
 			cmap[fd] = []*ast.CommentGroup{fd.Doc}
 
 		case *ast.GenDecl:
@@ -57,21 +53,13 @@ func parseFile(fset *token.FileSet, path, template string) (*ast.File, error) {
 				if !vs.Names[0].IsExported() {
 					continue
 				}
-				if gd.Doc == nil || strings.TrimSpace(gd.Doc.Text()) == vs.Names[0].Name {
-					text := fmt.Sprintf(commentTemplate, vs.Names[0].Name)
-					pos := gd.Pos() - token.Pos(1)
-					gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
-				}
+				addValueSpecComment(gd, vs, commentTemplate)
 			case token.TYPE:
 				ts := gd.Specs[0].(*ast.TypeSpec)
 				if !ts.Name.IsExported() {
 					continue
 				}
-				if gd.Doc == nil || strings.TrimSpace(gd.Doc.Text()) == ts.Name.Name {
-					text := fmt.Sprintf(commentTemplate, ts.Name.Name)
-					pos := gd.Pos() - token.Pos(1)
-					gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
-				}
+				addTypeSpecComment(gd, ts, commentTemplate)
 			default:
 				continue
 			}
@@ -87,4 +75,29 @@ func parseFile(fset *token.FileSet, path, template string) (*ast.File, error) {
 	af.Comments = cmap.Filter(af).Comments()
 
 	return af, nil
+}
+
+func addFuncDeclComment(fd *ast.FuncDecl, commentTemplate string) {
+	if fd.Doc == nil || strings.TrimSpace(fd.Doc.Text()) == fd.Name.Name {
+		text := fmt.Sprintf(commentTemplate, fd.Name)
+		pos := fd.Pos() - token.Pos(1)
+		fd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+	}
+
+}
+
+func addValueSpecComment(gd *ast.GenDecl, vs *ast.ValueSpec, commentTemplate string) {
+	if gd.Doc == nil || strings.TrimSpace(gd.Doc.Text()) == vs.Names[0].Name {
+		text := fmt.Sprintf(commentTemplate, vs.Names[0].Name)
+		pos := gd.Pos() - token.Pos(1)
+		gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+	}
+}
+
+func addTypeSpecComment(gd *ast.GenDecl, ts *ast.TypeSpec, commentTemplate string) {
+	if gd.Doc == nil || strings.TrimSpace(gd.Doc.Text()) == ts.Name.Name {
+		text := fmt.Sprintf(commentTemplate, ts.Name.Name)
+		pos := gd.Pos() - token.Pos(1)
+		gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+	}
 }
