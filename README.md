@@ -1,14 +1,14 @@
-#gocmt - Add missing comment on exported function, method, type, constant, variable in go file
+# gocmt - Add missing comment on exported function, method, type, constant, variable in go file
 
 [![Build Status](https://travis-ci.org/Gnouc/gocmt.svg?branch=master)](https://travis-ci.org/Gnouc/gocmt)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Gnouc/gocmt)](https://goreportcard.com/report/github.com/Gnouc/gocmt)
 
-#Installation
+# Installation
 ```sh
 go get -u github.com/Gnouc/gocmt
 ```
 
-#Why gocmt
+# Why gocmt
 
 Some of my projects have many files with exported fields, variables, functions missing comment, so lint tools will complain.
 
@@ -16,7 +16,7 @@ I find a way to auto add missing comment to them, just to pass the lint tools bu
 
 So `gocmt` comes in.
 
-#Usage
+# Usage
 ```sh
 $ gocmt -h
 usage: gocmt [flags] [file ...]
@@ -27,7 +27,7 @@ usage: gocmt [flags] [file ...]
     	Comment template (default "...")
 ```
 
-#Example
+# Example
 ```sh
 $ cat testdata/main.go
 package p
@@ -92,10 +92,10 @@ func ExportWithComment(s string) {
 
 Default template is `...`, you can change it using `-t` option.
 
-#Author
+# Author
 
 Cuong Manh Le <cuong.manhle.vn@gmail.com>
 
-#License
+# License
 
 See [LICENSE](https://github.com/Gnouc/gocmt/blob/master/LICENSE)
