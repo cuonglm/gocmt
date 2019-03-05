@@ -112,7 +112,7 @@ func addValueSpecComment(gd *ast.GenDecl, vs *ast.ValueSpec, commentTemplate str
 
 func addParenValueSpecComment( vs *ast.ValueSpec, commentTemplate string) {
 	if vs.Doc == nil || strings.TrimSpace(vs.Doc.Text()) == vs.Names[0].Name {
-		// commentTemplate = strings.Replace(commentTemplate, commentBase, commentIndentedBase, 1)
+		commentTemplate = strings.Replace(commentTemplate, commentBase, commentIndentedBase, 1)
 		text := fmt.Sprintf(commentTemplate, vs.Names[0].Name)
 		pos := vs.Pos() - token.Pos(1)
 		vs.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
