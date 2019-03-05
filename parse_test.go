@@ -11,6 +11,7 @@ func Test_parseFile(t *testing.T) {
 		wantErr bool
 	}{
 		{"testdata/main.go", false},
+		{"testdata/parenthesis.go", false},
 		{"testdata/invalid_file.go", true},
 	}
 

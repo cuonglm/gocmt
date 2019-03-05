@@ -10,10 +10,11 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 var (
-	commentBase = "\n// %s "
+	commentBase = "// %s "
 	fset        = token.NewFileSet()
 	defaultMode = os.FileMode(0644)
 )
@@ -67,6 +68,11 @@ func gocmtRun() int {
 }
 
 func processFile(filename, template string, inPlace bool) error {
+	// skip test files
+	if strings.HasSuffix(filename, "_test.go"){
+		return nil
+	}
+
 	f, err := os.Open(filename)
 	if err != nil {
 		return err
