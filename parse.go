@@ -68,7 +68,6 @@ func parseFile(fset *token.FileSet, path, template string) (*ast.File, error) {
 					continue
 				}
 
-
 			case token.TYPE:
 				ts := gd.Specs[0].(*ast.TypeSpec)
 				if !ts.Name.IsExported() {
