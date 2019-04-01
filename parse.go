@@ -49,11 +49,25 @@ func parseFile(fset *token.FileSet, path, template string) (*ast.File, error) {
 
 			switch gd.Tok {
 			case token.CONST, token.VAR:
-				vs := gd.Specs[0].(*ast.ValueSpec)
-				if !vs.Names[0].IsExported() {
+				if gd.Lparen == token.NoPos && gd.Rparen == token.NoPos{
+					vs := gd.Specs[0].(*ast.ValueSpec)
+					if !vs.Names[0].IsExported() {
+						continue
+					}
+					addValueSpecComment(gd, vs, commentTemplate)
+				} else {
+					// if there's a () add comment for each sub entry
+					for _, spec := range gd.Specs{
+						vs := spec.(*ast.ValueSpec)
+						if !vs.Names[0].IsExported() {
+							continue
+						}
+						addParenValueSpecComment( vs, commentTemplate)
+						cmap[vs] = []*ast.CommentGroup{vs.Doc}
+					}
 					continue
 				}
-				addValueSpecComment(gd, vs, commentTemplate)
+
 			case token.TYPE:
 				ts := gd.Specs[0].(*ast.TypeSpec)
 				if !ts.Name.IsExported() {
@@ -91,6 +105,16 @@ func addValueSpecComment(gd *ast.GenDecl, vs *ast.ValueSpec, commentTemplate str
 		text := fmt.Sprintf(commentTemplate, vs.Names[0].Name)
 		pos := gd.Pos() - token.Pos(1)
 		gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+	}
+}
+
+
+func addParenValueSpecComment( vs *ast.ValueSpec, commentTemplate string) {
+	if vs.Doc == nil || strings.TrimSpace(vs.Doc.Text()) == vs.Names[0].Name {
+		commentTemplate = strings.Replace(commentTemplate, commentBase, commentIndentedBase, 1)
+		text := fmt.Sprintf(commentTemplate, vs.Names[0].Name)
+		pos := vs.Pos() - token.Pos(1)
+		vs.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
 	}
 }
 
