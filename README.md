@@ -1,11 +1,11 @@
 # gocmt - Add missing comment on exported function, method, type, constant, variable in go file
 
-[![Build Status](https://travis-ci.org/Gnouc/gocmt.svg?branch=master)](https://travis-ci.org/Gnouc/gocmt)
-[![Go Report Card](https://goreportcard.com/badge/github.com/Gnouc/gocmt)](https://goreportcard.com/report/github.com/Gnouc/gocmt)
+[![Build Status](https://travis-ci.org/cuonglm/gocmt.svg?branch=master)](https://travis-ci.org/cuonglm/gocmt)
+[![Go Report Card](https://goreportcard.com/badge/github.com/cuonglm/gocmt)](https://goreportcard.com/report/github.com/cuonglm/gocmt)
 
 # Installation
 ```sh
-go get -u github.com/Gnouc/gocmt
+go get -u github.com/cuonglm/gocmt
 ```
 
 # Why gocmt
@@ -98,4 +98,4 @@ Cuong Manh Le <cuong.manhle.vn@gmail.com>
 
 # License
 
-See [LICENSE](https://github.com/Gnouc/gocmt/blob/master/LICENSE)
+See [LICENSE](https://github.com/cuonglm/gocmt/blob/master/LICENSE)
