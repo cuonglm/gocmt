@@ -108,16 +108,14 @@ func processFile(filename, template string, inPlace bool) error {
 		new = regexp.MustCompile(`(?m)\n{3,}`).ReplaceAll(new, []byte("\n\n"))
 
 		if inPlace {
-			if err := ioutil.WriteFile(filename, new, defaultMode); err != nil {
-				return err
-			}
-			return nil
+			return ioutil.WriteFile(filename, new, defaultMode)
 		}
 
 		fmt.Fprintf(os.Stdout, "%s", new)
-	} else {
-		fmt.Fprintf(os.Stderr, "%s no changes\n", filename)
+		return nil
 	}
+
+	fmt.Fprintf(os.Stderr, "%s no changes\n", filename)
 
 	return nil
 }
