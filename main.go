@@ -18,8 +18,8 @@ var (
 	commentBase = "\n// %s "
 	// if it's in an indented block, this makes sure that the indentation is correct
 	commentIndentedBase = "// %s "
-	fset        = token.NewFileSet()
-	defaultMode = os.FileMode(0644)
+	fset                = token.NewFileSet()
+	defaultMode         = os.FileMode(0644)
 )
 
 var (
@@ -72,7 +72,7 @@ func gocmtRun() int {
 
 func processFile(filename, template string, inPlace bool) error {
 	// skip test files
-	if strings.HasSuffix(filename, "_test.go"){
+	if strings.HasSuffix(filename, "_test.go") {
 		return nil
 	}
 
