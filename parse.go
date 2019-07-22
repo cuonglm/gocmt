@@ -15,12 +15,9 @@ func parseFile(fset *token.FileSet, path, template string) (*ast.File, error) {
 		nil,
 		parser.ParseComments|parser.AllErrors,
 	)
-
 	if err != nil {
 		return nil, err
 	}
-
-	commentTemplate := commentBase + template
 
 	// Inject first comment to prevent nil comment map
 	if len(af.Comments) == 0 {
@@ -30,6 +27,11 @@ func parseFile(fset *token.FileSet, path, template string) (*ast.File, error) {
 			af.Comments = af.Comments[1:]
 		}()
 	}
+
+	return buildComments(af, commentBase+template)
+}
+
+func buildComments(af *ast.File, commentTemplate string) (*ast.File, error) {
 	cmap := ast.NewCommentMap(fset, af, af.Comments)
 
 	for _, d := range af.Decls {
