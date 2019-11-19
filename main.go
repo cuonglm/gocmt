@@ -104,16 +104,16 @@ func processFile(filename, template string, inPlace bool) error {
 		panic(err)
 	}
 
-	new := buf.Bytes()
-	if !bytes.Equal(orig, new) {
-		new = tralingTabRegex.ReplaceAll(new, []byte(""))
-		new = newlinesRegex.ReplaceAll(new, []byte("\n\n"))
+	newBuf := buf.Bytes()
+	if !bytes.Equal(orig, newBuf) {
+		newBuf = tralingTabRegex.ReplaceAll(newBuf, []byte(""))
+		newBuf = newlinesRegex.ReplaceAll(newBuf, []byte("\n\n"))
 
 		if inPlace {
-			return ioutil.WriteFile(filename, new, defaultMode)
+			return ioutil.WriteFile(filename, newBuf, defaultMode)
 		}
 
-		fmt.Fprintf(os.Stdout, "%s", new)
+		fmt.Fprintf(os.Stdout, "%s", newBuf)
 		return nil
 	}
 
