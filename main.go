@@ -73,8 +73,8 @@ func gocmtRun() int {
 }
 
 func processFile(filename, template string, inPlace bool) error {
-	// skip test files
-	if strings.HasSuffix(filename, "_test.go") {
+	// skip test files and files in vendor/
+	if strings.HasSuffix(filename, "_test.go") || strings.Contains(filename, "/vendor/") {
 		return nil
 	}
 

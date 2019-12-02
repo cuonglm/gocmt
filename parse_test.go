@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"go/token"
+	"io/ioutil"
 	"testing"
 )
 
@@ -26,5 +28,23 @@ func Test_parseFile(t *testing.T) {
 		if !tt.wantErr && err != nil {
 			t.Fatalf("Parsing %s error: %s", tt.path, err)
 		}
+	}
+}
+
+func TestSkipVendor(t *testing.T) {
+	filePath := "testdata/vendor/main.go"
+	origBuf, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := processFile(filePath, "...", true); err != nil {
+		t.Fatal(err)
+	}
+	buf, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(buf, origBuf) {
+		t.Fatal("file in vendor/ directory was edited")
 	}
 }
