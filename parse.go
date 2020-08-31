@@ -84,6 +84,9 @@ func addFuncDeclComment(fd *ast.FuncDecl, commentTemplate string) {
 	if fd.Doc == nil || strings.TrimSpace(fd.Doc.Text()) == fd.Name.Name {
 		text := fmt.Sprintf(commentTemplate, fd.Name)
 		pos := fd.Pos() - token.Pos(1)
+		if fd.Doc != nil {
+			pos = fd.Doc.Pos()
+		}
 		fd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
 	}
 
@@ -93,6 +96,9 @@ func addValueSpecComment(gd *ast.GenDecl, vs *ast.ValueSpec, commentTemplate str
 	if gd.Doc == nil || strings.TrimSpace(gd.Doc.Text()) == vs.Names[0].Name {
 		text := fmt.Sprintf(commentTemplate, vs.Names[0].Name)
 		pos := gd.Pos() - token.Pos(1)
+		if gd.Doc != nil {
+			pos = gd.Doc.Pos()
+		}
 		gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
 	}
 }
@@ -102,6 +108,9 @@ func addParenValueSpecComment(vs *ast.ValueSpec, commentTemplate string) {
 		commentTemplate = strings.Replace(commentTemplate, commentBase, commentIndentedBase, 1)
 		text := fmt.Sprintf(commentTemplate, vs.Names[0].Name)
 		pos := vs.Pos() - token.Pos(1)
+		if vs.Doc != nil {
+			pos = vs.Doc.Pos()
+		}
 		vs.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
 	}
 }
@@ -110,6 +119,9 @@ func addTypeSpecComment(gd *ast.GenDecl, ts *ast.TypeSpec, commentTemplate strin
 	if gd.Doc == nil || strings.TrimSpace(gd.Doc.Text()) == ts.Name.Name {
 		text := fmt.Sprintf(commentTemplate, ts.Name.Name)
 		pos := gd.Pos() - token.Pos(1)
+		if gd.Doc != nil {
+			pos = gd.Doc.Pos()
+		}
 		gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
 	}
 }

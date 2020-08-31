@@ -39,6 +39,9 @@ func Export(s string) {
 // ExportWithComment ...
 func ExportWithComment(s string) {
 }
+
+// ExistedComment ...
+func ExistedComment() {}
 `
 
 const parenSrc = `package p
@@ -51,7 +54,6 @@ const (
 	DarkOmega Summon = "celeste"
 	// LightOmega best summon
 	LightOmega Summon = "luminineria"
-
 	// WindOmega ...
 	WindOmega Summon = "tiamat"
 )

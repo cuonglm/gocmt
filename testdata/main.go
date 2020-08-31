@@ -22,3 +22,6 @@ func Export(s string) {
 
 func ExportWithComment(s string) {
 }
+
+// ExistedComment
+func ExistedComment() {}
