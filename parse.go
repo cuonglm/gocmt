@@ -8,15 +8,12 @@ import (
 	"strings"
 )
 
-func parseFile(fset *token.FileSet, path, template string) (*ast.File, error) {
-	af, err := parser.ParseFile(
-		fset,
-		path,
-		nil,
-		parser.ParseComments|parser.AllErrors,
-	)
+// parseFile parses and modifies the input file if necessary. Returns AST represents of (new) source, a boolean
+// to report whether the source file was modified, and any error if occurred.
+func parseFile(fset *token.FileSet, filePath, template string) (af *ast.File, modified bool, err error) {
+	af, err = parser.ParseFile(fset, filePath, nil, parser.ParseComments|parser.AllErrors)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	// Inject first comment to prevent nil comment map
@@ -28,38 +25,25 @@ func parseFile(fset *token.FileSet, path, template string) (*ast.File, error) {
 		}()
 	}
 
-	return buildComments(af, commentBase+template)
-}
-
-func buildComments(af *ast.File, commentTemplate string) (*ast.File, error) {
+	commentTemplate := commentBase + template
+	numComments := len(af.Comments)
 	cmap := ast.NewCommentMap(fset, af, af.Comments)
 
-	for _, d := range af.Decls {
-		switch d.(type) {
+	ast.Inspect(af, func(n ast.Node) bool {
+		switch typ := n.(type) {
 		case *ast.FuncDecl:
-			fd := d.(*ast.FuncDecl)
-
-			if !fd.Name.IsExported() {
-				continue
+			if !typ.Name.IsExported() {
+				return true
 			}
-
-			addFuncDeclComment(fd, commentTemplate)
-			cmap[fd] = []*ast.CommentGroup{fd.Doc}
+			addFuncDeclComment(typ, commentTemplate)
+			cmap[typ] = []*ast.CommentGroup{typ.Doc}
 
 		case *ast.GenDecl:
-			gd := d.(*ast.GenDecl)
-
-			switch gd.Tok {
+			switch typ.Tok {
 			case token.CONST, token.VAR:
-				if gd.Lparen == token.NoPos && gd.Rparen == token.NoPos {
-					vs := gd.Specs[0].(*ast.ValueSpec)
-					if !vs.Names[0].IsExported() {
-						continue
-					}
-					addValueSpecComment(gd, vs, commentTemplate)
-				} else {
+				if !(typ.Lparen == token.NoPos && typ.Rparen == token.NoPos) {
 					// if there's a () add comment for each sub entry
-					for _, spec := range gd.Specs {
+					for _, spec := range typ.Specs {
 						vs := spec.(*ast.ValueSpec)
 						if !vs.Names[0].IsExported() {
 							continue
@@ -67,30 +51,33 @@ func buildComments(af *ast.File, commentTemplate string) (*ast.File, error) {
 						addParenValueSpecComment(vs, commentTemplate)
 						cmap[vs] = []*ast.CommentGroup{vs.Doc}
 					}
-					continue
+					return true
 				}
+
+				vs := typ.Specs[0].(*ast.ValueSpec)
+				if !vs.Names[0].IsExported() {
+					return true
+				}
+				addValueSpecComment(typ, vs, commentTemplate)
 
 			case token.TYPE:
-				ts := gd.Specs[0].(*ast.TypeSpec)
+				ts := typ.Specs[0].(*ast.TypeSpec)
 				if !ts.Name.IsExported() {
-					continue
+					return true
 				}
-				addTypeSpecComment(gd, ts, commentTemplate)
+				addTypeSpecComment(typ, ts, commentTemplate)
 			default:
-				continue
+				return true
 			}
-
-			cmap[gd] = []*ast.CommentGroup{gd.Doc}
-
-		default:
-			continue
+			cmap[typ] = []*ast.CommentGroup{typ.Doc}
 		}
-	}
+		return true
+	})
 
 	// Rebuild comments
 	af.Comments = cmap.Filter(af).Comments()
-
-	return af, nil
+	modified = len(af.Comments) > numComments
+	return
 }
 
 func addFuncDeclComment(fd *ast.FuncDecl, commentTemplate string) {

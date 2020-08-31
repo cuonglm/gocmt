@@ -20,7 +20,7 @@ var (
 	commentIndentedBase = "// %s "
 	fset                = token.NewFileSet()
 	defaultMode         = os.FileMode(0644)
-	tralingTabRegex     = regexp.MustCompile(`(?m)\t+$`)
+	tralingWsRegex      = regexp.MustCompile(`(?m)[\t ]+$`)
 	newlinesRegex       = regexp.MustCompile(`(?m)\n{3,}`)
 )
 
@@ -78,23 +78,7 @@ func processFile(filename, template string, inPlace bool) error {
 		return nil
 	}
 
-	f, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		closeErr := f.Close()
-		if closeErr != nil {
-			panic(closeErr)
-		}
-	}()
-
-	orig, err := ioutil.ReadAll(f)
-	if err != nil {
-		return err
-	}
-
-	af, err := parseFile(fset, filename, template)
+	af, modified, err := parseFile(fset, filename, template)
 	if err != nil {
 		return err
 	}
@@ -105,10 +89,9 @@ func processFile(filename, template string, inPlace bool) error {
 	}
 
 	newBuf := buf.Bytes()
-	if !bytes.Equal(orig, newBuf) {
-		newBuf = tralingTabRegex.ReplaceAll(newBuf, []byte(""))
+	if modified {
+		newBuf = tralingWsRegex.ReplaceAll(newBuf, []byte(""))
 		newBuf = newlinesRegex.ReplaceAll(newBuf, []byte("\n\n"))
-
 		if inPlace {
 			return ioutil.WriteFile(filename, newBuf, defaultMode)
 		}
