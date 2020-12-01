@@ -12,7 +12,6 @@ func Test_isGoFile(t *testing.T) {
 	}{
 		{"main.go", true},
 		{"README.md", false},
-		{".travis.yml", false},
 	}
 
 	for _, tt := range isGoFileTest {

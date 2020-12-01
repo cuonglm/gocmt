@@ -1,6 +1,6 @@
 # gocmt - Add missing comment on exported function, method, type, constant, variable in go file
 
-[![Build Status](https://travis-ci.org/cuonglm/gocmt.svg?branch=master)](https://travis-ci.org/cuonglm/gocmt)
+![Build status](https://github.com/cuonglm/gocmt/workflows/Go/badge.svg?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/cuonglm/gocmt)](https://goreportcard.com/report/github.com/cuonglm/gocmt)
 
 # Installation
