@@ -49,6 +49,34 @@ const parenSrc = `package p
 // Summon ...
 type Summon string
 
+// DarkOmega ...
+const (
+	DarkOmega Summon = "celeste"
+	// LightOmega best summon
+	LightOmega Summon = "luminineria"
+	// WindOmega
+	WindOmega Summon = "tiamat"
+)
+
+// FireUtility ...
+const FireUtility Summon = "the sun"
+
+// Light ...
+const (
+	// Light best summon
+	Light Summon = "lucifer"
+)
+
+// Light2 best summon
+const (
+	Light2 Summon = "lucifer"
+)
+`
+const parenSrc2 = `package p
+
+// Summon ...
+type Summon string
+
 const (
 	// DarkOmega ...
 	DarkOmega Summon = "celeste"
@@ -65,6 +93,12 @@ const (
 	// Light best summon
 	Light Summon = "lucifer"
 )
+
+// Light2 best summon
+const (
+	// Light2 ...
+	Light2 Summon = "lucifer"
+)
 `
 
 func Test_parseFile(t *testing.T) {
@@ -77,6 +111,38 @@ func Test_parseFile(t *testing.T) {
 		{"testdata/main.go", baseSrc, true, false},
 		{"testdata/parenthesis.go", parenSrc, true, false},
 		{"testdata/invalid_file.go", "", false, true},
+	}
+
+	for _, tc := range parseFileTests {
+		tc := tc
+		t.Run(tc.path, func(t *testing.T) {
+			t.Parallel()
+			fset := token.NewFileSet()
+			af, modified, err := parseFile(fset, tc.path, "...")
+			assert.True(t, tc.wantErr == (err != nil))
+			assert.Equal(t, tc.modified, modified)
+
+			if tc.modified {
+				buf := new(bytes.Buffer)
+				assert.NoError(t, format.Node(buf, fset, af))
+				newBuf := buf.Bytes()
+				newBuf = tralingWsRegex.ReplaceAll(newBuf, []byte(""))
+				newBuf = newlinesRegex.ReplaceAll(newBuf, []byte("\n\n"))
+				assert.Equal(t, tc.expectedSrc, string(newBuf))
+			}
+		})
+
+	}
+}
+func Test_parseFileWithParenComment(t *testing.T) {
+	*parenComment = true
+	parseFileTests := []struct {
+		path        string
+		expectedSrc string
+		modified    bool
+		wantErr     bool
+	}{
+		{"testdata/parenthesis.go", parenSrc2, true, false},
 	}
 
 	for _, tc := range parseFileTests {

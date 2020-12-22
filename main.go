@@ -28,6 +28,7 @@ var (
 	inPlace  = flag.Bool("i", false, "Make in-place editing")
 	template = flag.String("t", "...", "Comment template")
 	dir      = flag.String("d", "", "Directory to process")
+	parenComment = flag.Bool("p", false, "Add comments to all const inside the parens if true")
 )
 
 func main() {
