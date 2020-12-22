@@ -16,3 +16,8 @@ const (
 	// Light best summon
 	Light Summon = "lucifer"
 )
+
+// Light2 best summon
+const (
+	Light2 Summon = "lucifer"
+)

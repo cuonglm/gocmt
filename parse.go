@@ -42,16 +42,18 @@ func parseFile(fset *token.FileSet, filePath, template string) (af *ast.File, mo
 			switch typ.Tok {
 			case token.CONST, token.VAR:
 				if !(typ.Lparen == token.NoPos && typ.Rparen == token.NoPos) {
-					// if there's a () add comment for each sub entry
-					for _, spec := range typ.Specs {
-						vs := spec.(*ast.ValueSpec)
-						if !vs.Names[0].IsExported() {
-							continue
+					// if there's a () and parenComment is true, add comment for each sub entry
+					if *parenComment {
+						for _, spec := range typ.Specs {
+							vs := spec.(*ast.ValueSpec)
+							if !vs.Names[0].IsExported() {
+								continue
+							}
+							addParenValueSpecComment(vs, commentTemplate)
+							cmap[vs] = []*ast.CommentGroup{vs.Doc}
 						}
-						addParenValueSpecComment(vs, commentTemplate)
-						cmap[vs] = []*ast.CommentGroup{vs.Doc}
+						return true
 					}
-					return true
 				}
 
 				vs := typ.Specs[0].(*ast.ValueSpec)
