@@ -101,6 +101,20 @@ const (
 )
 `
 
+const issue7 = `package p
+
+import "log"
+
+// I ...
+var I = 1
+
+func a() {
+
+        // LogAll ...
+	var LogAll map[string]struct{}
+	log.Println(LogAll)
+}`
+
 func Test_parseFile(t *testing.T) {
 	parseFileTests := []struct {
 		path        string
@@ -111,6 +125,7 @@ func Test_parseFile(t *testing.T) {
 		{"testdata/main.go", baseSrc, true, false},
 		{"testdata/parenthesis.go", parenSrc, true, false},
 		{"testdata/invalid_file.go", "", false, true},
+		{"testdata/issue7.go", issue7, false, false},
 	}
 
 	for _, tc := range parseFileTests {
