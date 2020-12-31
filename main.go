@@ -8,6 +8,7 @@ import (
 	"go/token"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -25,9 +26,9 @@ var (
 )
 
 var (
-	inPlace  = flag.Bool("i", false, "Make in-place editing")
-	template = flag.String("t", "...", "Comment template")
-	dir      = flag.String("d", "", "Directory to process")
+	inPlace      = flag.Bool("i", false, "Make in-place editing")
+	template     = flag.String("t", "...", "Comment template")
+	dir          = flag.String("d", "", "Directory to process")
 	parenComment = flag.Bool("p", false, "Add comments to all const inside the parens if true")
 )
 
@@ -94,7 +95,11 @@ func processFile(filename, template string, inPlace bool) error {
 		newBuf = tralingWsRegex.ReplaceAll(newBuf, []byte(""))
 		newBuf = newlinesRegex.ReplaceAll(newBuf, []byte("\n\n"))
 		if inPlace {
-			return ioutil.WriteFile(filename, newBuf, defaultMode)
+			err := ioutil.WriteFile(filename, newBuf, defaultMode)
+			if err != nil {
+				return err
+			}
+			return exec.Command("gofmt", "-w", filename).Run() // go's format.Node has bug, so use gofmt(it's built-in)
 		}
 
 		fmt.Fprintf(os.Stdout, "%s", newBuf)

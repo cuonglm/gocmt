@@ -72,6 +72,9 @@ func parseFile(fset *token.FileSet, filePath, template string) (af *ast.File, mo
 				return true
 			}
 			cmap[typ] = []*ast.CommentGroup{typ.Doc}
+		case *ast.DeclStmt:
+			// If an exported var defined in a func, it will occur twice, so remove it here.
+			delete(cmap, typ)
 		}
 		return true
 	})
