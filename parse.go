@@ -29,14 +29,18 @@ func parseFile(fset *token.FileSet, filePath, template string) (af *ast.File, mo
 	numComments := len(af.Comments)
 	cmap := ast.NewCommentMap(fset, af, af.Comments)
 
+	skipped := make(map[ast.Node]bool)
 	ast.Inspect(af, func(n ast.Node) bool {
 		switch typ := n.(type) {
 		case *ast.FuncDecl:
-			if !typ.Name.IsExported() {
+			if skipped[typ] || !typ.Name.IsExported() {
 				return true
 			}
 			addFuncDeclComment(typ, commentTemplate)
 			cmap[typ] = []*ast.CommentGroup{typ.Doc}
+
+		case *ast.DeclStmt:
+			skipped[typ.Decl] = true
 
 		case *ast.GenDecl:
 			switch typ.Tok {
@@ -57,14 +61,14 @@ func parseFile(fset *token.FileSet, filePath, template string) (af *ast.File, mo
 				}
 
 				vs := typ.Specs[0].(*ast.ValueSpec)
-				if !vs.Names[0].IsExported() {
+				if skipped[typ] || !vs.Names[0].IsExported() {
 					return true
 				}
 				addValueSpecComment(typ, vs, commentTemplate)
 
 			case token.TYPE:
 				ts := typ.Specs[0].(*ast.TypeSpec)
-				if !ts.Name.IsExported() {
+				if skipped[typ] || !ts.Name.IsExported() {
 					return true
 				}
 				addTypeSpecComment(typ, ts, commentTemplate)
