@@ -60,6 +60,11 @@ func parseFile(fset *token.FileSet, filePath, template string) (af *ast.File, mo
 					}
 				}
 
+				// empty var block
+				if len(typ.Specs) == 0 {
+					return true
+				}
+
 				vs := typ.Specs[0].(*ast.ValueSpec)
 				if skipped[typ] || !vs.Names[0].IsExported() {
 					return true
