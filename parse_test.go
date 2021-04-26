@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"go/format"
 	"go/token"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -184,14 +184,14 @@ func Test_parseFileWithParenComment(t *testing.T) {
 
 func TestSkipVendor(t *testing.T) {
 	filePath := "testdata/vendor/main.go"
-	origBuf, err := ioutil.ReadFile(filePath)
+	origBuf, err := os.ReadFile(filePath)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if err := processFile(filePath, "...", true); err != nil {
 		t.Fatal(err)
 	}
-	buf, err := ioutil.ReadFile(filePath)
+	buf, err := os.ReadFile(filePath)
 	if err != nil {
 		t.Fatal(err)
 	}
