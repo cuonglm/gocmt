@@ -2,7 +2,7 @@
 //
 // Usage:
 //
-//  gocmt [-i false|true] [-t "comment template"] [-d dir] [-p false|true]
+//  gocmt [-i] [-p] [-t "comment template"] [-d dir]
 //
 // This tools exists because I have to work with some existed code base, which
 // is lack of documentation for many exported identifiers. Iterating over them
