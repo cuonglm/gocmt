@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"go/format"
 	"go/token"
+    "io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -107,7 +108,7 @@ func processFile(filename, template string, inPlace bool) error {
 		newBuf = tralingWsRegex.ReplaceAll(newBuf, []byte(""))
 		newBuf = newlinesRegex.ReplaceAll(newBuf, []byte("\n\n"))
 		if inPlace {
-			return os.WriteFile(filename, newBuf, defaultMode)
+			return ioutil.WriteFile(filename, newBuf, defaultMode)
 		}
 
 		fmt.Fprintf(os.Stdout, "%s", newBuf)
