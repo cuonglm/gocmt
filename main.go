@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"go/format"
 	"go/token"
-    "io/ioutil"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
