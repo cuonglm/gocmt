@@ -11,5 +11,4 @@
 // lookback and fix missing comments.
 //
 // You SHOULD always write documentation for all your exported identifiers.
-
 package main
