@@ -5,8 +5,17 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/cuonglm/gocmt)](https://goreportcard.com/report/github.com/cuonglm/gocmt)
 
 # Installation
+
+For go1.15 and below:
+
 ```sh
 go get -u github.com/cuonglm/gocmt
+```
+
+For go1.16 and above:
+
+```sh
+go install github.com/cuonglm/gocmt@latest
 ```
 
 # Why gocmt
