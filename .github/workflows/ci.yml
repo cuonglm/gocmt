@@ -1,10 +1,11 @@
 name: Test
 
 on:
+  pull_request:
   push:
     branches:
       - master
-  pull_request:
+
 jobs:
   test:
     name: Test
@@ -22,5 +23,3 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: golangci/golangci-lint-action@v2
-        with:
-          version: v1.32
