@@ -1,6 +1,6 @@
 # gocmt - Add missing comment on exported function, method, type, constant, variable in go file
 
-![Build status](https://github.com/cuonglm/gocmt/actions/workflows/ci.yml/badge.svg?branch=master)
+![Build status](https://github.com/cuonglm/gocmt/actions/workflows/ci.yml/badge.svg?branch=main)
 [![Go Reference](https://pkg.go.dev/badge/github.com/cuonglm/gocmt.svg)](https://pkg.go.dev/github.com/cuonglm/gocmt)
 [![Go Report Card](https://goreportcard.com/badge/github.com/cuonglm/gocmt)](https://goreportcard.com/report/github.com/cuonglm/gocmt)
 
@@ -108,4 +108,4 @@ Cuong Manh Le <cuong.manhle.vn@gmail.com>
 
 # License
 
-See [LICENSE](https://github.com/cuonglm/gocmt/blob/master/LICENSE)
+See [LICENSE](https://github.com/cuonglm/gocmt/blob/main/LICENSE)
