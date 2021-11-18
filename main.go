@@ -22,6 +22,7 @@ var (
 	defaultMode         = os.FileMode(0644)
 	tralingWsRegex      = regexp.MustCompile(`(?m)[\t ]+$`)
 	newlinesRegex       = regexp.MustCompile(`(?m)\n{3,}`)
+	excludeDirs         []string
 )
 
 var (
@@ -29,6 +30,8 @@ var (
 	template     = flag.String("t", "...", "Comment template")
 	dir          = flag.String("d", "", "Directory to process")
 	parenComment = flag.Bool("p", false, "Add comments to all const inside the parens if true")
+	exclude      = flag.String("e", "",
+		"Path to exclude(only support prefix match), such as 'pkg/xxx/', 'pkg/xxx/,pkg/yyy/', and so on")
 )
 
 func main() {
@@ -42,6 +45,10 @@ func usage() {
 
 func gocmtRun() int {
 	flag.Parse()
+
+	if *exclude != "" {
+		excludeDirs = strings.Split(*exclude, ",")
+	}
 
 	if *dir != "" {
 		if err := filepath.Walk(*dir, walkFunc); err != nil {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"go/scanner"
 	"os"
 	"strings"
@@ -17,6 +18,14 @@ func printError(err error) {
 
 func walkFunc(path string, fi os.FileInfo, err error) error {
 	if err == nil && isGoFile(fi) {
+		// exclude path
+		for _, e := range excludeDirs {
+			if strings.HasPrefix(path, e) {
+				fmt.Fprintf(os.Stdout, "ignore %s\n", path)
+				return nil
+			}
+		}
+
 		err = processFile(path, *template, *inPlace)
 	}
 
