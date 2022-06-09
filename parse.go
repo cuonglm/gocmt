@@ -26,7 +26,12 @@ func parseFile(fset *token.FileSet, filePath, template string) (af *ast.File, mo
 	}
 
 	commentTemplate := commentBase + template
-	numComments := len(af.Comments)
+
+	originalCommentSign := ""
+	for _, c := range af.Comments {
+		originalCommentSign += c.Text()
+	}
+
 	cmap := ast.NewCommentMap(fset, af, af.Comments)
 
 	skipped := make(map[ast.Node]bool)
@@ -87,7 +92,14 @@ func parseFile(fset *token.FileSet, filePath, template string) (af *ast.File, mo
 
 	// Rebuild comments
 	af.Comments = cmap.Filter(af).Comments()
-	modified = len(af.Comments) > numComments
+
+	currentCommentSign := ""
+	for _, c := range af.Comments {
+		currentCommentSign += c.Text()
+	}
+
+
+	modified = currentCommentSign != originalCommentSign
 	return
 }
 

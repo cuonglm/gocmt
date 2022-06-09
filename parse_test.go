@@ -115,6 +115,17 @@ func a() {
 	log.Println(LogAll)
 }`
 
+const existed = `package p
+
+// CommentExisted ...
+func CommentExisted() {
+}
+
+// CommentExistedWithSpace ...
+func CommentExistedWithSpace() {
+}
+`
+
 func Test_parseFile(t *testing.T) {
 	parseFileTests := []struct {
 		path        string
@@ -126,6 +137,7 @@ func Test_parseFile(t *testing.T) {
 		{"testdata/parenthesis.go", parenSrc, true, false},
 		{"testdata/invalid_file.go", "", false, true},
 		{"testdata/issue7.go", issue7, false, false},
+		{"testdata/existed.go", existed, true, false},
 	}
 
 	for _, tc := range parseFileTests {
