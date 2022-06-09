@@ -5,6 +5,7 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"log"
 	"strings"
 )
 
@@ -111,8 +112,18 @@ func addFuncDeclComment(fd *ast.FuncDecl, commentTemplate string) {
 			pos = fd.Doc.Pos()
 		}
 		fd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+		return
 	}
-
+	if fd.Doc != nil && !strings.HasPrefix(strings.TrimSpace(fd.Doc.Text()), fd.Name.Name) && isDouble(fd.Doc) {
+		log.Println(fd.Doc.List[0].Text)
+		text := fmt.Sprintf("\n// %s %s", fd.Name, strings.TrimSpace(fd.Doc.Text()))
+		pos := fd.Pos() - token.Pos(1)
+		if fd.Doc != nil {
+			pos = fd.Doc.Pos()
+		}
+		fd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+		return
+	}
 }
 
 func addValueSpecComment(gd *ast.GenDecl, vs *ast.ValueSpec, commentTemplate string) {

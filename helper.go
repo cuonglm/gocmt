@@ -1,6 +1,7 @@
 package main
 
 import (
+	"go/ast"
 	"go/scanner"
 	"os"
 	"strings"
@@ -25,4 +26,16 @@ func walkFunc(path string, fi os.FileInfo, err error) error {
 	}
 
 	return nil
+}
+
+func isDouble(group *ast.CommentGroup) bool {
+	if group == nil {
+		return false
+	}
+	if len(group.List) == 0 {
+		return false
+	}
+	head := group.List[0].Text
+	head = strings.TrimSpace(head)
+	return strings.HasPrefix(head, "//")
 }

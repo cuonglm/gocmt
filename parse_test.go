@@ -124,6 +124,16 @@ func CommentExisted() {
 // CommentExistedWithSpace ...
 func CommentExistedWithSpace() {
 }
+
+// CommentExistedWithWrong something
+func CommentExistedWithWrong() {
+}
+
+/*
+something
+*/
+func CommentWrongByDontChange() {
+}
 `
 
 func Test_parseFile(t *testing.T) {
