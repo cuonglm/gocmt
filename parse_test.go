@@ -145,6 +145,13 @@ var ValueWithExistedComment2 = 1
 should't change C style comment
 */
 var ValueWithExistedComment3 = 1
+
+// ParenValueWithExistedComment1 existed comment
+const (
+	ParenValueWithExistedComment1 = 1
+	// ParenValueWithExistedComment2 something
+	ParenValueWithExistedComment2 = 1
+)
 `
 
 func Test_parseFile(t *testing.T) {

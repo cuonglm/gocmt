@@ -147,6 +147,13 @@ func addParenValueSpecComment(vs *ast.ValueSpec, commentTemplate string) {
 			pos = vs.Doc.Pos()
 		}
 		vs.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+		return
+	}
+	if vs.Doc != nil && isLineComment(vs.Doc) && !hasPrefix(vs.Doc, vs.Names[0].Name) {
+		text := fmt.Sprintf(commentBase+"%s", vs.Names[0].Name, strings.TrimSpace(vs.Doc.Text()))
+		pos := vs.Doc.Pos()
+		vs.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+		return
 	}
 }
 
