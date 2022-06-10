@@ -113,9 +113,7 @@ func addFuncDeclComment(fd *ast.FuncDecl, commentTemplate string) {
 		return
 	}
 	if fd.Doc != nil && isLineComment(fd.Doc) && !hasCommentPrefix(fd.Doc, fd.Name.Name) {
-		text := fmt.Sprintf(commentBase+"%s", fd.Name, strings.TrimSpace(fd.Doc.Text()))
-		pos := fd.Doc.Pos()
-		fd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+		modifyComment(fd.Doc, fd.Name.Name)
 		return
 	}
 }
@@ -131,9 +129,7 @@ func addValueSpecComment(gd *ast.GenDecl, vs *ast.ValueSpec, commentTemplate str
 		return
 	}
 	if gd.Doc != nil && isLineComment(gd.Doc) && !hasCommentPrefix(gd.Doc, vs.Names[0].Name) {
-		text := fmt.Sprintf(commentBase+"%s", vs.Names[0].Name, strings.TrimSpace(gd.Doc.Text()))
-		pos := gd.Doc.Pos()
-		gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+		modifyComment(gd.Doc, vs.Names[0].Name)
 		return
 	}
 }
@@ -150,9 +146,7 @@ func addParenValueSpecComment(vs *ast.ValueSpec, commentTemplate string) {
 		return
 	}
 	if vs.Doc != nil && isLineComment(vs.Doc) && !hasCommentPrefix(vs.Doc, vs.Names[0].Name) {
-		text := fmt.Sprintf(commentBase+"%s", vs.Names[0].Name, strings.TrimSpace(vs.Doc.Text()))
-		pos := vs.Doc.Pos()
-		vs.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+		modifyComment(vs.Doc, vs.Names[0].Name)
 		return
 	}
 }
@@ -168,9 +162,14 @@ func addTypeSpecComment(gd *ast.GenDecl, ts *ast.TypeSpec, commentTemplate strin
 		return
 	}
 	if gd.Doc != nil && isLineComment(gd.Doc) && !hasCommentPrefix(gd.Doc, ts.Name.Name) {
-		text := fmt.Sprintf(commentBase+"%s", ts.Name.Name, strings.TrimSpace(gd.Doc.Text()))
-		pos := gd.Doc.Pos()
-		gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+		modifyComment(gd.Doc, ts.Name.Name)
 		return
 	}
+}
+
+func modifyComment(comment *ast.CommentGroup, prefix string) {
+	first := comment.List[0].Text
+	first = strings.TrimPrefix(first, "// ")
+	first = fmt.Sprintf(commentBase+"%s", prefix, first)
+	comment.List[0].Text = first
 }

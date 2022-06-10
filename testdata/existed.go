@@ -12,6 +12,11 @@ func CommentExistedWithSpace() {
 func CommentExistedWithWrong() {
 }
 
+// multi-line comments
+// something
+func CommentExistedWithWrong2() {
+}
+
 /*
 something
 */
@@ -24,10 +29,14 @@ var ValueWithExistedComment1 = 1
 // existed comment with spaces     
 var ValueWithExistedComment2 = 1
 
+// multi-line comments
+// something
+var ValueWithExistedComment3 = 1
+
 /*
 should't change C style comment
 */
-var ValueWithExistedComment3 = 1
+var ValueWithExistedComment4 = 1
 
 // existed comment
 const (
@@ -36,13 +45,25 @@ const (
 	ParenValueWithExistedComment2 = 1
 )
 
+// multi-line comments
+// something
+const (
+	ParenValueWithExistedComment3 = 1
+	// ParenValueWithExistedComment2 something
+	ParenValueWithExistedComment4 = 1
+)
+
 // existed comment
 type TypeWithExistedComment1 int
 
 // existed comment with spaces     
 type TypeWithExistedComment2 int
 
+// multi-line comments
+// something
+type TypeWithExistedComment3 int
+
 /*
 should't change C style comment
 */
-type TypeWithExistedComment3 int
+type TypeWithExistedComment4 int
