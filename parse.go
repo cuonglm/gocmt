@@ -5,7 +5,6 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
-	"log"
 	"strings"
 )
 
@@ -114,12 +113,8 @@ func addFuncDeclComment(fd *ast.FuncDecl, commentTemplate string) {
 		return
 	}
 	if fd.Doc != nil && !strings.HasPrefix(strings.TrimSpace(fd.Doc.Text()), fd.Name.Name) && isLineComment(fd.Doc) {
-		log.Println(fd.Doc.List[0].Text)
 		text := fmt.Sprintf(commentBase+"%s", fd.Name, strings.TrimSpace(fd.Doc.Text()))
-		pos := fd.Pos() - token.Pos(1)
-		if fd.Doc != nil {
-			pos = fd.Doc.Pos()
-		}
+		pos := fd.Doc.Pos()
 		fd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
 		return
 	}
@@ -133,6 +128,13 @@ func addValueSpecComment(gd *ast.GenDecl, vs *ast.ValueSpec, commentTemplate str
 			pos = gd.Doc.Pos()
 		}
 		gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+		return
+	}
+	if gd.Doc != nil && isLineComment(gd.Doc) && !hasPrefix(gd.Doc, vs.Names[0].Name) {
+		text := fmt.Sprintf(commentBase+"%s", vs.Names[0].Name, strings.TrimSpace(gd.Doc.Text()))
+		pos := gd.Doc.Pos()
+		gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+		return
 	}
 }
 

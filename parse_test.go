@@ -134,6 +134,17 @@ something
 */
 func CommentWrongByDontChange() {
 }
+
+// ValueWithExistedComment1 existed comment
+var ValueWithExistedComment1 = 1
+
+// ValueWithExistedComment2 existed comment with spaces
+var ValueWithExistedComment2 = 1
+
+/*
+should't change C style comment
+*/
+var ValueWithExistedComment3 = 1
 `
 
 func Test_parseFile(t *testing.T) {

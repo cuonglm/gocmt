@@ -28,14 +28,18 @@ func walkFunc(path string, fi os.FileInfo, err error) error {
 	return nil
 }
 
-func isLineComment(group *ast.CommentGroup) bool {
-	if group == nil {
+func isLineComment(comment *ast.CommentGroup) bool {
+	if comment == nil {
 		return false
 	}
-	if len(group.List) == 0 {
+	if len(comment.List) == 0 {
 		return false
 	}
-	head := group.List[0].Text
+	head := comment.List[0].Text
 	head = strings.TrimSpace(head)
 	return strings.HasPrefix(head, "//")
+}
+
+func hasPrefix(comment *ast.CommentGroup, prefix string) bool {
+	return strings.HasPrefix(strings.TrimSpace(comment.Text()), prefix)
 }
