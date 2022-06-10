@@ -116,7 +116,7 @@ func addFuncDeclComment(fd *ast.FuncDecl, commentTemplate string) {
 	}
 	if fd.Doc != nil && !strings.HasPrefix(strings.TrimSpace(fd.Doc.Text()), fd.Name.Name) && isDouble(fd.Doc) {
 		log.Println(fd.Doc.List[0].Text)
-		text := fmt.Sprintf("\n// %s %s", fd.Name, strings.TrimSpace(fd.Doc.Text()))
+		text := fmt.Sprintf(commentBase + "%s", fd.Name, strings.TrimSpace(fd.Doc.Text()))
 		pos := fd.Pos() - token.Pos(1)
 		if fd.Doc != nil {
 			pos = fd.Doc.Pos()
