@@ -42,7 +42,7 @@ func parseFile(fset *token.FileSet, filePath, template string) (af *ast.File, mo
 				return true
 			}
 			addFuncDeclComment(typ, commentTemplate)
-			cmap[typ] = []*ast.CommentGroup{typ.Doc}
+			cmap[typ] = appendCommentGroup(cmap[typ], typ.Doc)
 
 		case *ast.DeclStmt:
 			skipped[typ.Decl] = true
@@ -59,7 +59,7 @@ func parseFile(fset *token.FileSet, filePath, template string) (af *ast.File, mo
 								continue
 							}
 							addParenValueSpecComment(vs, commentTemplate)
-							cmap[vs] = []*ast.CommentGroup{vs.Doc}
+							cmap[vs] = appendCommentGroup(cmap[vs], vs.Doc)
 						}
 						return true
 					}
@@ -85,7 +85,7 @@ func parseFile(fset *token.FileSet, filePath, template string) (af *ast.File, mo
 			default:
 				return true
 			}
-			cmap[typ] = []*ast.CommentGroup{typ.Doc}
+			cmap[typ] = appendCommentGroup(cmap[typ], typ.Doc)
 		}
 		return true
 	})
