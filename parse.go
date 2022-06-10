@@ -165,5 +165,12 @@ func addTypeSpecComment(gd *ast.GenDecl, ts *ast.TypeSpec, commentTemplate strin
 			pos = gd.Doc.Pos()
 		}
 		gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+		return
+	}
+	if gd.Doc != nil && isLineComment(gd.Doc) && !hasPrefix(gd.Doc, ts.Name.Name) {
+		text := fmt.Sprintf(commentBase+"%s", ts.Name.Name, strings.TrimSpace(gd.Doc.Text()))
+		pos := gd.Doc.Pos()
+		gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+		return
 	}
 }

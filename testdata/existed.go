@@ -35,3 +35,14 @@ const (
 	// ParenValueWithExistedComment2 something
 	ParenValueWithExistedComment2 = 1
 )
+
+// existed comment
+type TypeWithExistedComment1 int
+
+// existed comment with spaces     
+type TypeWithExistedComment2 int
+
+/*
+should't change C style comment
+*/
+type TypeWithExistedComment3 int

@@ -152,6 +152,17 @@ const (
 	// ParenValueWithExistedComment2 something
 	ParenValueWithExistedComment2 = 1
 )
+
+// TypeWithExistedComment1 existed comment
+type TypeWithExistedComment1 int
+
+// TypeWithExistedComment2 existed comment with spaces
+type TypeWithExistedComment2 int
+
+/*
+should't change C style comment
+*/
+type TypeWithExistedComment3 int
 `
 
 func Test_parseFile(t *testing.T) {
