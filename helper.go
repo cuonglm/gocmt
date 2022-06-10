@@ -28,7 +28,7 @@ func walkFunc(path string, fi os.FileInfo, err error) error {
 	return nil
 }
 
-func isDouble(group *ast.CommentGroup) bool {
+func isLineComment(group *ast.CommentGroup) bool {
 	if group == nil {
 		return false
 	}

@@ -99,7 +99,6 @@ func parseFile(fset *token.FileSet, filePath, template string) (af *ast.File, mo
 		currentCommentSign += c.Text()
 	}
 
-
 	modified = currentCommentSign != originalCommentSign
 	return
 }
@@ -114,9 +113,9 @@ func addFuncDeclComment(fd *ast.FuncDecl, commentTemplate string) {
 		fd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
 		return
 	}
-	if fd.Doc != nil && !strings.HasPrefix(strings.TrimSpace(fd.Doc.Text()), fd.Name.Name) && isDouble(fd.Doc) {
+	if fd.Doc != nil && !strings.HasPrefix(strings.TrimSpace(fd.Doc.Text()), fd.Name.Name) && isLineComment(fd.Doc) {
 		log.Println(fd.Doc.List[0].Text)
-		text := fmt.Sprintf(commentBase + "%s", fd.Name, strings.TrimSpace(fd.Doc.Text()))
+		text := fmt.Sprintf(commentBase+"%s", fd.Name, strings.TrimSpace(fd.Doc.Text()))
 		pos := fd.Pos() - token.Pos(1)
 		if fd.Doc != nil {
 			pos = fd.Doc.Pos()
