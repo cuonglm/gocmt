@@ -112,7 +112,7 @@ func addFuncDeclComment(fd *ast.FuncDecl, commentTemplate string) {
 		fd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
 		return
 	}
-	if fd.Doc != nil && !strings.HasPrefix(strings.TrimSpace(fd.Doc.Text()), fd.Name.Name) && isLineComment(fd.Doc) {
+	if fd.Doc != nil && isLineComment(fd.Doc) && !hasCommentPrefix(fd.Doc, fd.Name.Name) {
 		text := fmt.Sprintf(commentBase+"%s", fd.Name, strings.TrimSpace(fd.Doc.Text()))
 		pos := fd.Doc.Pos()
 		fd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
@@ -130,7 +130,7 @@ func addValueSpecComment(gd *ast.GenDecl, vs *ast.ValueSpec, commentTemplate str
 		gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
 		return
 	}
-	if gd.Doc != nil && isLineComment(gd.Doc) && !hasPrefix(gd.Doc, vs.Names[0].Name) {
+	if gd.Doc != nil && isLineComment(gd.Doc) && !hasCommentPrefix(gd.Doc, vs.Names[0].Name) {
 		text := fmt.Sprintf(commentBase+"%s", vs.Names[0].Name, strings.TrimSpace(gd.Doc.Text()))
 		pos := gd.Doc.Pos()
 		gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
@@ -149,7 +149,7 @@ func addParenValueSpecComment(vs *ast.ValueSpec, commentTemplate string) {
 		vs.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
 		return
 	}
-	if vs.Doc != nil && isLineComment(vs.Doc) && !hasPrefix(vs.Doc, vs.Names[0].Name) {
+	if vs.Doc != nil && isLineComment(vs.Doc) && !hasCommentPrefix(vs.Doc, vs.Names[0].Name) {
 		text := fmt.Sprintf(commentBase+"%s", vs.Names[0].Name, strings.TrimSpace(vs.Doc.Text()))
 		pos := vs.Doc.Pos()
 		vs.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
@@ -167,7 +167,7 @@ func addTypeSpecComment(gd *ast.GenDecl, ts *ast.TypeSpec, commentTemplate strin
 		gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
 		return
 	}
-	if gd.Doc != nil && isLineComment(gd.Doc) && !hasPrefix(gd.Doc, ts.Name.Name) {
+	if gd.Doc != nil && isLineComment(gd.Doc) && !hasCommentPrefix(gd.Doc, ts.Name.Name) {
 		text := fmt.Sprintf(commentBase+"%s", ts.Name.Name, strings.TrimSpace(gd.Doc.Text()))
 		pos := gd.Doc.Pos()
 		gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}

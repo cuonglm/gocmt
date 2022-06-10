@@ -40,6 +40,6 @@ func isLineComment(comment *ast.CommentGroup) bool {
 	return strings.HasPrefix(head, "//")
 }
 
-func hasPrefix(comment *ast.CommentGroup, prefix string) bool {
+func hasCommentPrefix(comment *ast.CommentGroup, prefix string) bool {
 	return strings.HasPrefix(strings.TrimSpace(comment.Text()), prefix)
 }
