@@ -1,5 +1,7 @@
 package p
 
+import "embed"
+
 // CommentExisted
 func CommentExisted() {
 }
@@ -67,3 +69,15 @@ type TypeWithExistedComment3 int
 should't change C style comment
 */
 type TypeWithExistedComment4 int
+
+//go:embed dont_modify_this_comment.txt
+//go:embed image/*
+var Embed embed.FS
+
+// something
+//go:embed dont_modify_this_comment.txt
+var Embed embed.FS
+
+//go:generate goyacc -o gopher.go -p parser gopher.y
+func Generate() {
+}

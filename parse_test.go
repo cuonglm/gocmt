@@ -117,6 +117,8 @@ func a() {
 
 const existed = `package p
 
+import "embed"
+
 // CommentExisted ...
 func CommentExisted() {
 }
@@ -184,6 +186,20 @@ type TypeWithExistedComment3 int
 should't change C style comment
 */
 type TypeWithExistedComment4 int
+
+// Embed ...
+//go:embed dont_modify_this_comment.txt
+//go:embed image/*
+var Embed embed.FS
+
+// Embed something
+//go:embed dont_modify_this_comment.txt
+var Embed embed.FS
+
+// Generate ...
+//go:generate goyacc -o gopher.go -p parser gopher.y
+func Generate() {
+}
 `
 
 func Test_parseFile(t *testing.T) {

@@ -168,7 +168,13 @@ func addTypeSpecComment(gd *ast.GenDecl, ts *ast.TypeSpec, commentTemplate strin
 }
 
 func modifyComment(comment *ast.CommentGroup, prefix string) {
+	commentTemplate := commentBase + *template
 	first := comment.List[0].Text
+	if strings.HasPrefix(first, "//") && !strings.HasPrefix(first, "// ") {
+		text := fmt.Sprintf(commentTemplate, prefix)
+		comment.List = append([]*ast.Comment{{Text: text, Slash: comment.Pos()}}, comment.List...)
+		return
+	}
 	first = strings.TrimPrefix(first, "// ")
 	first = fmt.Sprintf(commentBase+"%s", prefix, first)
 	comment.List[0].Text = first
