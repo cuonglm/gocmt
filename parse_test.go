@@ -115,6 +115,114 @@ func a() {
 	log.Println(LogAll)
 }`
 
+const existed = `package p
+
+// global comments should never be deleted
+// something
+
+import "embed"
+
+// global comment 1
+
+// global comment 2
+// global comment 3
+
+// ============= function =============
+
+// FuncWithExistedComment1 ...
+func FuncWithExistedComment1() {
+}
+
+// FuncWithExistedComment2 ...
+func FuncWithExistedComment2() {
+	// this comments should never be deleted
+}
+
+// FuncWithExistedComment3 something
+func FuncWithExistedComment3() {
+}
+
+// FuncWithExistedComment4 multi-line comments
+// something
+func FuncWithExistedComment4() {
+}
+
+/*
+something
+*/
+func FuncWithExistedComment5() {
+}
+
+// ============= value =============
+
+// ValueWithExistedComment1 existed comment
+var ValueWithExistedComment1 = 1
+
+// ValueWithExistedComment2 existed comment with spaces
+var ValueWithExistedComment2 = 1
+
+// ValueWithExistedComment3 multi-line comments
+// something
+var ValueWithExistedComment3 = 1
+
+/*
+should't change C style comment
+*/
+var ValueWithExistedComment4 = 1
+
+// ============= paren value =============
+
+// ParenValueWithExistedComment1 existed comment
+const (
+	ParenValueWithExistedComment1 = 1
+	// ParenValueWithExistedComment2 something
+	ParenValueWithExistedComment2 = 1
+)
+
+// ParenValueWithExistedComment3 multi-line comments
+// something
+const (
+	ParenValueWithExistedComment3 = 1
+	// ParenValueWithExistedComment2 something
+	ParenValueWithExistedComment4 = 1
+)
+
+// ============= type =============
+
+// TypeWithExistedComment1 existed comment
+type TypeWithExistedComment1 int
+
+// TypeWithExistedComment2 existed comment with spaces
+type TypeWithExistedComment2 int
+
+// TypeWithExistedComment3 multi-line comments
+// something
+type TypeWithExistedComment3 int
+
+/*
+should't change C style comment
+*/
+type TypeWithExistedComment4 int
+
+// ============= marker comment =============
+
+// Embed ...
+//go:embed dont_modify_this_comment.txt
+//go:embed image/*
+var Embed embed.FS
+
+// Embed something
+//go:embed dont_modify_this_comment.txt
+var Embed embed.FS
+
+// Generate ...
+//go:generate goyacc -o gopher.go -p parser gopher.y
+func Generate() {
+}
+
+// ============= end =============
+`
+
 func Test_parseFile(t *testing.T) {
 	parseFileTests := []struct {
 		path        string
@@ -126,6 +234,7 @@ func Test_parseFile(t *testing.T) {
 		{"testdata/parenthesis.go", parenSrc, true, false},
 		{"testdata/invalid_file.go", "", false, true},
 		{"testdata/issue7.go", issue7, false, false},
+		{"testdata/existed.go", existed, true, false},
 	}
 
 	for _, tc := range parseFileTests {

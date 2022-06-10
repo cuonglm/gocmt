@@ -26,7 +26,12 @@ func parseFile(fset *token.FileSet, filePath, template string) (af *ast.File, mo
 	}
 
 	commentTemplate := commentBase + template
-	numComments := len(af.Comments)
+
+	originalCommentSign := ""
+	for _, c := range af.Comments {
+		originalCommentSign += c.Text()
+	}
+
 	cmap := ast.NewCommentMap(fset, af, af.Comments)
 
 	skipped := make(map[ast.Node]bool)
@@ -37,7 +42,7 @@ func parseFile(fset *token.FileSet, filePath, template string) (af *ast.File, mo
 				return true
 			}
 			addFuncDeclComment(typ, commentTemplate)
-			cmap[typ] = []*ast.CommentGroup{typ.Doc}
+			cmap[typ] = appendCommentGroup(cmap[typ], typ.Doc)
 
 		case *ast.DeclStmt:
 			skipped[typ.Decl] = true
@@ -54,7 +59,7 @@ func parseFile(fset *token.FileSet, filePath, template string) (af *ast.File, mo
 								continue
 							}
 							addParenValueSpecComment(vs, commentTemplate)
-							cmap[vs] = []*ast.CommentGroup{vs.Doc}
+							cmap[vs] = appendCommentGroup(cmap[vs], vs.Doc)
 						}
 						return true
 					}
@@ -80,14 +85,20 @@ func parseFile(fset *token.FileSet, filePath, template string) (af *ast.File, mo
 			default:
 				return true
 			}
-			cmap[typ] = []*ast.CommentGroup{typ.Doc}
+			cmap[typ] = appendCommentGroup(cmap[typ], typ.Doc)
 		}
 		return true
 	})
 
 	// Rebuild comments
 	af.Comments = cmap.Filter(af).Comments()
-	modified = len(af.Comments) > numComments
+
+	currentCommentSign := ""
+	for _, c := range af.Comments {
+		currentCommentSign += c.Text()
+	}
+
+	modified = currentCommentSign != originalCommentSign
 	return
 }
 
@@ -99,8 +110,12 @@ func addFuncDeclComment(fd *ast.FuncDecl, commentTemplate string) {
 			pos = fd.Doc.Pos()
 		}
 		fd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+		return
 	}
-
+	if fd.Doc != nil && isLineComment(fd.Doc) && !hasCommentPrefix(fd.Doc, fd.Name.Name) {
+		modifyComment(fd.Doc, fd.Name.Name)
+		return
+	}
 }
 
 func addValueSpecComment(gd *ast.GenDecl, vs *ast.ValueSpec, commentTemplate string) {
@@ -111,6 +126,11 @@ func addValueSpecComment(gd *ast.GenDecl, vs *ast.ValueSpec, commentTemplate str
 			pos = gd.Doc.Pos()
 		}
 		gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+		return
+	}
+	if gd.Doc != nil && isLineComment(gd.Doc) && !hasCommentPrefix(gd.Doc, vs.Names[0].Name) {
+		modifyComment(gd.Doc, vs.Names[0].Name)
+		return
 	}
 }
 
@@ -123,6 +143,11 @@ func addParenValueSpecComment(vs *ast.ValueSpec, commentTemplate string) {
 			pos = vs.Doc.Pos()
 		}
 		vs.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+		return
+	}
+	if vs.Doc != nil && isLineComment(vs.Doc) && !hasCommentPrefix(vs.Doc, vs.Names[0].Name) {
+		modifyComment(vs.Doc, vs.Names[0].Name)
+		return
 	}
 }
 
@@ -134,5 +159,23 @@ func addTypeSpecComment(gd *ast.GenDecl, ts *ast.TypeSpec, commentTemplate strin
 			pos = gd.Doc.Pos()
 		}
 		gd.Doc = &ast.CommentGroup{List: []*ast.Comment{{Slash: pos, Text: text}}}
+		return
 	}
+	if gd.Doc != nil && isLineComment(gd.Doc) && !hasCommentPrefix(gd.Doc, ts.Name.Name) {
+		modifyComment(gd.Doc, ts.Name.Name)
+		return
+	}
+}
+
+func modifyComment(comment *ast.CommentGroup, prefix string) {
+	commentTemplate := commentBase + *template
+	first := comment.List[0].Text
+	if strings.HasPrefix(first, "//") && !strings.HasPrefix(first, "// ") {
+		text := fmt.Sprintf(commentTemplate, prefix)
+		comment.List = append([]*ast.Comment{{Text: text, Slash: comment.Pos()}}, comment.List...)
+		return
+	}
+	first = strings.TrimPrefix(first, "// ")
+	first = fmt.Sprintf(commentBase+"%s", prefix, first)
+	comment.List[0].Text = first
 }
