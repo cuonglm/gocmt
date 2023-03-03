@@ -223,6 +223,12 @@ func Generate() {
 // ============= end =============
 `
 
+const generic = `package p
+
+// G ...
+type G[T any] struct{}
+`
+
 func Test_parseFile(t *testing.T) {
 	parseFileTests := []struct {
 		path        string
@@ -235,6 +241,7 @@ func Test_parseFile(t *testing.T) {
 		{"testdata/invalid_file.go", "", false, true},
 		{"testdata/issue7.go", issue7, false, false},
 		{"testdata/existed.go", existed, true, false},
+		{"testdata/generic.go", generic, true, false},
 	}
 
 	for _, tc := range parseFileTests {
